@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>The Nice Guy or the Peter Pan? Take the quiz | Terence Carfrae</title>
+  <meta name="description" content="Ten questions. Two minutes. Find out whether you're running the Nice Guy pattern, the Peter Pan pattern, or both.">
+  <link rel="canonical" href="https://terencecarfrae.com/quiz">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Terence Carfrae">
+  <meta property="og:title" content="The Nice Guy or the Peter Pan?">
+  <meta property="og:description" content="Ten questions. Two minutes. Find out which pattern you're running, or whether it's both.">
+  <meta property="og:url" content="https://terencecarfrae.com/quiz">
+  <meta property="og:image" content="https://terencecarfrae.com/assets/img/social-preview.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preload" as="font" type="font/ttf" href="assets/fonts/optima.ttf" crossorigin>
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/type-optima.css">
+  <style>
+    body { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+    .site-header { position: absolute; }
+    .quiz-page { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; padding: 130px 0 80px; }
+    .quiz-bg { position: absolute; inset: 0; }
+    .quiz-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; opacity: .5; filter: var(--grade); }
+    .quiz-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(18,16,13,.55), rgba(18,16,13,.88) 80%); }
+    .quiz { position: relative; width: 100%; max-width: 780px; margin: 0 auto; padding: 0 var(--gutter); }
+    @media (max-width: 600px) { .quiz-page { padding: 96px 0 56px; align-items: flex-start; } }
+
+    .screen[hidden] { display: none; }
+    .screen { animation: rise .6s ease both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+    .intro { text-align: center; }
+    .who { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 30px; text-align: left; font-size: 15px; color: var(--muted-light); max-width: 30em; }
+    .who img { width: 56px; height: 56px; border-radius: 50%; flex: none; border: 1px solid var(--line-light); }
+    .who strong { display: block; color: var(--text-light); font-weight: 700; }
+    .intro .lede { margin: 26px auto 38px; color: #d9d2c5; }
+    .intro .fine { margin-top: 20px; font-size: 14px; color: var(--muted-light); }
+
+    .progress { display: flex; align-items: center; gap: 18px; margin-bottom: 40px; }
+    .bar { flex: 1; height: 2px; background: var(--line-light); position: relative; }
+    .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--sand); transition: width .5s ease; }
+    .count { font-size: 13px; letter-spacing: .14em; color: var(--muted-light); white-space: nowrap; }
+    .back { background: none; border: 0; color: var(--muted-light); font: inherit; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; padding: 8px 0; }
+    .back:hover { color: var(--bone); }
+    .back:disabled { visibility: hidden; }
+
+    .question { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.15; margin-bottom: 34px; }
+    .question:focus { outline: none; }
+    .options { display: grid; gap: 12px; }
+    .option {
+      text-align: left; width: 100%; font: inherit; font-size: 18px; line-height: 1.45; color: var(--text-light);
+      background: rgba(37, 33, 27, .78); border: 1px solid var(--line-light); border-radius: var(--radius);
+      padding: 20px 22px 20px 64px; cursor: pointer; position: relative; min-height: 64px;
+      transition: border-color .2s, background .2s;
+    }
+    .option:hover { border-color: var(--sand); background: rgba(52, 46, 38, .88); }
+    .option:focus-visible { border-color: var(--sand); outline: 2px solid var(--sand); outline-offset: 2px; }
+    .option .key {
+      position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; display: grid; place-items: center;
+      border: 1px solid var(--line-light); font-size: 13px; color: var(--muted-light);
+    }
+    .option[aria-pressed="true"] { border-color: var(--sand); background: rgba(207, 194, 168, .18); }
+    .options.busy .option { pointer-events: none; }
+    .hint { margin-top: 22px; font-size: 13px; color: var(--stone); text-align: center; }
+    @media (hover: none) {
+      .hint, .option .key { display: none; }
+      .option { padding-left: 22px; }
+    }
+
+    .result h1 { font-size: clamp(40px, 6.4vw, 72px); margin-bottom: 10px; }
+    .result h1:focus { outline: none; }
+    .result h1 em { font-style: normal; color: var(--sand); }
+    .leaning { font-family: var(--display); font-style: italic; font-size: 22px; color: var(--muted-light); margin: 0; }
+    .split { margin: 30px 0 34px; }
+    .split-bar { display: flex; height: 10px; background: var(--ink-3); overflow: hidden; }
+    .split-bar .ng { background: var(--sand); transition: width 1.2s ease; }
+    .split-bar .pp { background: var(--stone); transition: width 1.2s ease; }
+    .split-legend { display: flex; justify-content: space-between; margin-top: 12px; font-size: 15px; }
+    .split-legend strong { font-family: var(--display); font-weight: 900; font-size: 22px; margin-right: 8px; }
+    .split-legend .dot { display: inline-block; width: 9px; height: 9px; vertical-align: 1px; }
+    .result .body p { font-size: 19px; color: #d9d2c5; }
+    .result .body .line { font-family: var(--display); font-size: clamp(24px, 2.6vw, 30px); line-height: 1.35; color: var(--text-light); margin: 28px 0; padding-left: 22px; border-left: 2px solid var(--taupe); }
+    .medicine { border-top: 1px solid var(--line-light); padding: 26px 0 0; margin: 30px 0 0; }
+    .medicine h2 { font-size: clamp(28px, 3vw, 36px); }
+    .medicine p { margin: 6px 0 0; color: var(--muted-light); font-size: 16px; }
+
+    .capture { margin-top: 34px; background: rgba(37, 33, 27, .82); border: 1px solid var(--line-light); padding: clamp(24px, 4vw, 40px); }
+    .capture h2 { font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 10px; }
+    .capture > p { color: #d9d2c5; font-size: 17px; }
+    .fields { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; margin: 22px 0 14px; }
+    .fields label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-light); }
+    .fields input {
+      font: inherit; font-size: 17px; text-transform: none; letter-spacing: 0; color: var(--text-light); background: var(--ink);
+      border: 1px solid var(--line-light); border-radius: var(--radius); padding: 14px 14px; min-height: 52px;
+    }
+    .fields input:focus { border-color: var(--sand); outline: 2px solid var(--sand); outline-offset: 1px; }
+    .capture .btn { width: 100%; }
+    .privacy { margin: 14px 0 0; font-size: 14px; color: var(--muted-light); }
+    .form-error { margin: 12px 0 0; color: #e7b9a6; font-size: 15px; }
+    @media (max-width: 560px) { .fields { grid-template-columns: 1fr; } }
+
+    .sent h2 { font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 10px; }
+    .sent h2:focus { outline: none; }
+    .bridge { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line-light); }
+    .bridge p { color: #d9d2c5; font-size: 17px; }
+    .next-links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 14px 28px; font-size: 15px; color: var(--muted-light); }
+    .next-links a { color: var(--text-light); }
+    .retake { background: none; border: 0; color: var(--muted-light); font: inherit; font-size: 15px; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 4px; }
+    .retake:hover { color: var(--bone); }
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Terence Carfrae, home"><img src="assets/img/logo-light.png" alt="Terence Carfrae" width="184" height="46"></a>
+  </div>
+</header>
+
+<main class="quiz-page" id="main">
+  <div class="quiz-bg"><img src="assets/img/forest-blur.jpg" alt="" width="1200" height="800"></div>
+
+  <div class="quiz">
+
+    <section class="screen intro" id="intro">
+      <div class="who">
+        <img src="assets/img/terence-avatar.jpg" alt="" width="240" height="240">
+        <span><strong>Terence Carfrae</strong>I work with men who've done the work, and are still stuck.</span>
+      </div>
+      <h1 class="title-xl">The Nice Guy or the Peter Pan?</h1>
+      <p class="lede">Ten moments from a relationship. Pick the answer that's true, not the one you'd like to be true. If you're single, answer for your last relationship.</p>
+      <button class="btn btn-cta" id="start" type="button">Begin <span class="arrow" aria-hidden="true">→</span></button>
+      <p class="fine">Two minutes. Your result is free. The full guide comes by email if you want it.</p>
+    </section>
+
+    <section class="screen" id="ask" hidden>
+      <div class="progress">
+        <button class="back" id="back" type="button">← Back</button>
+        <div class="bar" aria-hidden="true"><i id="fill"></i></div>
+        <span class="count" id="count" aria-hidden="true"></span>
+      </div>
+      <h2 class="question" id="question" tabindex="-1"></h2>
+      <div class="options" id="options"></div>
+      <p class="hint">Tip: press 1 to 4 on your keyboard.</p>
+    </section>
+
+    <section class="screen result" id="result" hidden>
+      <h1 id="r-title" tabindex="-1"></h1>
+      <p class="leaning" id="r-leaning" hidden></p>
+      <div class="split">
+        <div class="split-bar" role="img" id="r-split"><span class="ng" id="r-ng-bar" style="width:50%"></span><span class="pp" id="r-pp-bar" style="width:50%"></span></div>
+        <div class="split-legend" aria-hidden="true">
+          <span><i class="dot" style="background:var(--sand); margin-right: 8px"></i><strong id="r-ng">0%</strong>Nice Guy</span>
+          <span><strong id="r-pp">0%</strong>Peter Pan<i class="dot" style="background:var(--stone); margin-left: 8px"></i></span>
+        </div>
+      </div>
+      <div class="body" id="r-body"></div>
+      <div class="medicine">
+        <h2 id="r-need"></h2>
+        <p id="r-need-note"></p>
+      </div>
+
+      <!-- Email capture. In the live build this posts to the site's /api/submit function,
+           which writes the contact into GoHighLevel with a nice-guy / peter-pan / both tag.
+           That tag sends the matching guide and starts the matching email sequence. -->
+      <form class="capture" id="capture" novalidate>
+        <h2 id="c-title"></h2>
+        <p id="c-text"></p>
+        <div class="fields">
+          <label>First name<input name="first_name" autocomplete="given-name" required></label>
+          <label>Email<input name="email" type="email" autocomplete="email" inputmode="email" required></label>
+        </div>
+        <button class="btn btn-cta" type="submit" id="c-button"></button>
+        <p class="form-error" id="c-error" role="alert" hidden></p>
+        <p class="privacy">Then a few short emails from me. Unsubscribe any time. Your answers stay private.</p>
+      </form>
+
+      <div class="capture sent" id="sent" hidden>
+        <h2 tabindex="-1" id="s-title">It's on its way.</h2>
+        <p>Check your inbox, and your Promotions tab if it isn't there in a few minutes.</p>
+        <div class="bridge">
+          <p>The guide names it. The Initiation makes you face it. Five days, 27 short videos, $47.</p>
+          <a class="btn btn-ghost" href="https://terencecarfrae.com/5-day-initiation">See the Initiation <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="next-links">
+        <span>Rather talk it through? <a href="https://api.leadconnectorhq.com/widget/booking/Fzyb3TQTCbFdLibyNJw4">Book a call</a>.</span>
+        <button class="retake" id="retake" type="button">Take the quiz again</button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  // Each answer adds weight to one pattern or the other: ng = Nice Guy, pp = Peter Pan.
+  // The answers are written so neither side sounds more flattering than the other.
+  const QUESTIONS = [
+    { q: 'A conversation with her starts to get tense. You…', a: [
+      { t: 'Soften what you were about to say.', ng: 2 },
+      { t: 'Go quiet, and plan to bring it up later.', ng: 1 },
+      { t: 'Lighten it with a joke.', pp: 1 },
+      { t: 'Find a reason to be somewhere else.', pp: 2 } ] },
+    { q: 'She asks for something you don\'t want to do.', a: [
+      { t: 'You say yes, and resent it afterwards.', ng: 2 },
+      { t: 'You say yes, then quietly drag your feet.', ng: 1 },
+      { t: 'You say maybe, and keep it vague.', pp: 1 },
+      { t: 'You do your own thing and deal with it later.', pp: 2 } ] },
+    { q: 'A few months in, you usually notice…', a: [
+      { t: 'Your life quietly rearranging itself around her.', ng: 2 },
+      { t: 'You check how she feels about you more than you\'d admit.', ng: 1 },
+      { t: 'Her flaws getting louder.', pp: 2 },
+      { t: 'You wondering what else is out there.', pp: 1 } ] },
+    { q: 'Your relationships usually end because…', a: [
+      { t: 'I kept giving, and the spark went anyway.', ng: 2 },
+      { t: 'Things went flat, and neither of us said so.', ng: 1 },
+      { t: 'I left before it got too serious.', pp: 2 },
+      { t: 'Different women, same ending. I\'m not sure why.', ng: 1, pp: 1 } ] },
+    { q: 'When you\'re angry with her…', a: [
+      { t: 'You swallow it.', ng: 2 },
+      { t: 'You decide it isn\'t worth the fight.', ng: 1 },
+      { t: 'You go quiet for a few days.', pp: 1 },
+      { t: 'You start wondering whether she\'s the right one.', pp: 2 } ] },
+    { q: 'What do you want most from her?', a: [
+      { t: 'To know she\'s happy with me.', ng: 2 },
+      { t: 'Some appreciation for what I do.', ng: 1 },
+      { t: 'Room to breathe.', pp: 1 },
+      { t: 'To keep feeling the rush.', pp: 2 } ] },
+    { q: 'Your friends would say you\'re…', a: [
+      { t: 'The one who never makes a fuss.', ng: 2 },
+      { t: 'Easy-going. Happy to go along with the plan.', ng: 1 },
+      { t: 'Great fun, and hard to pin down.', pp: 2 },
+      { t: 'Always onto the next thing.', pp: 1 } ] },
+    { q: 'Commitment feels like…', a: [
+      { t: 'Safety. I\'d do a lot to keep it.', ng: 2 },
+      { t: 'Something I\'m good at, until the resentment builds.', ng: 1 },
+      { t: 'Something I\'d like, eventually.', pp: 2 },
+      { t: 'Fine in theory. I just haven\'t met the right one.', pp: 1 } ] },
+    { q: 'When it comes to sex, the pattern is…', a: [
+      { t: 'I wait for her to show she wants me.', ng: 2 },
+      { t: 'I hold back so I don\'t seem pushy.', ng: 1 },
+      { t: 'It\'s electric at the start, then I lose interest.', pp: 2 },
+      { t: 'Novelty is what really switches me on.', pp: 1 } ] },
+    { q: 'Which sentence would sting the most?', a: [
+      { t: '"I never know where you stand."', ng: 2 },
+      { t: '"You\'re always so agreeable."', ng: 1 },
+      { t: '"You never let anyone in."', pp: 1 },
+      { t: '"When are you going to grow up?"', pp: 2 } ] },
+  ];
+
+  const LINKS = {
+    initiation: 'https://terencecarfrae.com/5-day-initiation',
+  };
+
+  const RESULTS = {
+    ng: {
+      title: 'You\'re running <em>the Nice Guy</em> pattern.',
+      body: [
+        'Not that you\'re kind. That you keep trading your truth for approval, and calling it love.',
+        'You manage instead of meet. You adapt instead of decide. You smooth instead of stand. And when you don\'t stay with yourself, she loses her reference point. She can\'t feel where you stand, so she can\'t surrender into you.',
+      ],
+      line: 'A man who cannot say no cannot be trusted when he says yes.',
+      need: 'What you need: courage.',
+      needNote: 'The courage to say what\'s true, and let reality respond.',
+      capture: { title: 'Get the Nice Guy guide', text: 'Where the pattern formed, what it\'s costing you, and a practice to start breaking it this week.', button: 'Send me the guide' },
+    },
+    pp: {
+      title: 'You\'re running <em>the Peter Pan</em> pattern.',
+      body: [
+        'At first it feels like chemistry. Then the relationship asks something of you: consistency, presence, depth. And that\'s when you start scanning for flaws, reasons, exits.',
+        'You call it freedom. But if you need exits to feel safe, you\'re not free. You\'re managing anxiety. Peter Pan isn\'t chasing freedom. He\'s fleeing the consequences of absence.',
+      ],
+      line: 'Commitment doesn\'t kill the man. It reveals him.',
+      need: 'What you need: humbleness.',
+      needNote: 'The humbleness to admit you don\'t have this handled.',
+      capture: { title: 'Get the Peter Pan guide', text: 'Why you keep losing interest, what it\'s protecting you from, and the admission that starts to end it.', button: 'Send me the guide' },
+    },
+    both: {
+      title: 'You\'re running <em>both</em>.',
+      body: [
+        'Most men do. Single, you run: the chase, the novelty, one foot out the door. In a relationship, you disappear: the yes you didn\'t mean, the peace you kept at your own expense.',
+        'They look like opposites. They\'re the same wound with two strategies, and you switch between them depending on what the moment seems to demand.',
+      ],
+      line: 'Same root. Different strategy.',
+      need: 'What you need: courage and humbleness.',
+      needNote: 'Courage to stand in your truth. Humbleness to admit you need help.',
+      capture: { title: 'Get both guides', text: 'The Nice Guy guide and the Peter Pan guide, so you can see both sides of the pattern you\'re running.', button: 'Send me both guides' },
+    },
+  };
+
+  const STORE = 'tc-quiz-v1';
+  const PREVIEW = true;
+  const $ = (id) => document.getElementById(id);
+  const screens = { intro: $('intro'), ask: $('ask'), result: $('result') };
+
+  // order: the questions with their answers shuffled once per attempt (stored as indices so a refresh keeps them).
+  let state = null;       // { order: [[answerIndex...] per question], answers: [index|null], current }
+  let timer = null;
+
+  const question = (k) => QUESTIONS[k];
+  const option = (k, i) => QUESTIONS[k].a[state.order[k][i]];
+
+  function save() { try { sessionStorage.setItem(STORE, JSON.stringify(state)); } catch (e) { /* private mode: carry on without it */ } }
+  function load() { try { return JSON.parse(sessionStorage.getItem(STORE)); } catch (e) { return null; } }
+
+  function show(name) {
+    Object.entries(screens).forEach(([k, el]) => { el.hidden = k !== name; });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function shuffled(n) {
+    const a = [...Array(n).keys()];
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function start() {
+    clearTimeout(timer);
+    state = { order: QUESTIONS.map((q) => shuffled(q.a.length)), answers: QUESTIONS.map(() => null), current: 0 };
+    save();
+    history.pushState({ q: 0 }, '', '#q1');
+    show('ask');
+    render();
+  }
+
+  function render() {
+    const k = state.current;
+    $('count').textContent = `${k + 1} / ${QUESTIONS.length}`;
+    $('fill').style.width = `${(k / QUESTIONS.length) * 100}%`;
+    $('back').disabled = k === 0;
+    const qEl = $('question');
+    qEl.innerHTML = `<span class="sr-only">Question ${k + 1} of ${QUESTIONS.length}: </span>`;
+    qEl.append(question(k).q);
+    const box = $('options');
+    box.classList.remove('busy');
+    box.innerHTML = '';
+    state.order[k].forEach((_, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'option';
+      b.setAttribute('aria-pressed', String(state.answers[k] === i));
+      b.innerHTML = `<span class="key" aria-hidden="true">${i + 1}</span>`;
+      b.append(option(k, i).t);
+      b.addEventListener('click', () => choose(i));
+      box.append(b);
+    });
+    // Restart the entrance animation for each question, and keep the question at the top on a phone.
+    screens.ask.style.animation = 'none'; void screens.ask.offsetWidth; screens.ask.style.animation = '';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    qEl.focus({ preventScroll: true });
+  }
+
+  function choose(i) {
+    if (timer) return;                       // one answer per question: ignore double taps and repeats
+    const k = state.current;
+    state.answers[k] = i;
+    save();
+    const box = $('options');
+    box.classList.add('busy');
+    [...box.children].forEach((el, n) => el.setAttribute('aria-pressed', String(n === i)));
+    timer = setTimeout(() => {
+      timer = null;
+      if (k < QUESTIONS.length - 1) {
+        state.current = k + 1; save();
+        history.pushState({ q: state.current }, '', `#q${state.current + 1}`);
+        render();
+      } else {
+        finish(true);
+      }
+    }, 260);
+  }
+
+  function goBack() {
+    clearTimeout(timer); timer = null;
+    if (state && state.current > 0) { state.current--; save(); render(); }
+  }
+
+  function score() {
+    let ng = 0, pp = 0;
+    state.answers.forEach((i, k) => { if (i === null) return; const o = option(k, i); ng += o.ng || 0; pp += o.pp || 0; });
+    const share = ng / (ng + pp);
+    return { share, key: share >= 0.65 ? 'ng' : share <= 0.35 ? 'pp' : 'both' };
+  }
+
+  function finish(push) {
+    const missing = state.answers.indexOf(null);
+    if (missing !== -1) { state.current = missing; save(); render(); return; }
+    const { share, key } = score();
+    const r = RESULTS[key];
+    const ngPct = Math.round(share * 100);
+    const ppPct = 100 - ngPct;
+    if (push) history.pushState({ result: true }, '', '#result');
+
+    $('r-title').innerHTML = r.title;
+    const lean = $('r-leaning');
+    lean.hidden = key !== 'both';
+    lean.textContent = ngPct >= 55 ? 'Leaning Nice Guy.' : ngPct <= 45 ? 'Leaning Peter Pan.' : 'Evenly split.';
+    $('r-ng').textContent = `${ngPct}%`;
+    $('r-pp').textContent = `${ppPct}%`;
+    $('r-split').setAttribute('aria-label', `Your answers: ${ngPct}% Nice Guy, ${ppPct}% Peter Pan`);
+    $('r-body').innerHTML = r.body.map((p) => `<p>${p}</p>`).join('') + `<p class="line">${r.line}</p>`;
+    $('r-need').textContent = r.need;
+    $('r-need-note').textContent = r.needNote;
+    $('c-title').textContent = r.capture.title;
+    $('c-text').textContent = r.capture.text;
+    $('c-button').innerHTML = `${r.capture.button} <span class="arrow" aria-hidden="true">→</span>`;
+    $('capture').hidden = !!state.sent;
+    $('sent').hidden = !state.sent;
+    $('c-error').hidden = true;
+
+    $('fill').style.width = '100%';
+    show('result');
+    $('r-title').focus({ preventScroll: true });
+    $('r-ng-bar').style.width = '50%'; $('r-pp-bar').style.width = '50%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      $('r-ng-bar').style.width = `${ngPct}%`; $('r-pp-bar').style.width = `${ppPct}%`;
+    }));
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const first_name = form.first_name.value.trim();
+    const email = form.email.value.trim();
+    const err = $('c-error');
+    if (!first_name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      err.textContent = 'Please add your first name and a valid email.'; err.hidden = false; return;
+    }
+    const button = $('c-button');
+    button.disabled = true;
+    const { key, share } = score();
+    try {
+      if (!PREVIEW) {
+        const res = await fetch('/api/submit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quiz: 'pattern', first_name, email, result: key, ng_share: Math.round(share * 100) }),
+        });
+        if (!res.ok) throw new Error(res.status);
+      }
+      state.sent = true; save();
+      $('capture').hidden = true; $('sent').hidden = false;
+      $('s-title').focus();
+    } catch (x) {
+      err.textContent = 'That didn\'t go through. Please try again in a moment.'; err.hidden = false;
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  // Browser back and forward move between questions instead of leaving the quiz.
+  window.addEventListener('popstate', (e) => {
+    clearTimeout(timer); timer = null;
+    const s = e.state;
+    if (!state || !s) { show('intro'); return; }
+    if (s.result) { finish(false); return; }
+    state.current = s.q; save(); show('ask'); render();
+  });
+
+  // Pick up where he left off after a refresh. Arriving from the start page (#start) skips the intro he has just read there.
+  (function resume() {
+    if (location.hash === '#start') { history.replaceState(null, '', location.pathname); start(); return; }
+    const saved = load();
+    if (!saved || !Array.isArray(saved.answers) || saved.answers.length !== QUESTIONS.length) return;
+    state = saved;
+    if (location.hash === '#result' && saved.answers.every((a) => a !== null)) { finish(false); return; }
+    if (/^#q\d+$/.test(location.hash)) { show('ask'); render(); }
+  })();
+
+  $('start').addEventListener('click', start);
+  $('retake').addEventListener('click', start);
+  // Keep the on-page Back and the browser's back in step: both walk the same history entries.
+  $('back').addEventListener('click', () => {
+    if (history.state && history.state.q > 0) history.back(); else goBack();
+  });
+  $('capture').addEventListener('submit', submit);
+  document.addEventListener('keydown', (e) => {
+    if (screens.ask.hidden || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4) choose(n - 1);
+  });
+</script>
+</body>
+</html>

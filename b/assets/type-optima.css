@@ -1,0 +1,18 @@
+/* Version B type: Optima headings with Avenir Book body, from Terence's brand font folder.
+   Load after site.css to swap the type; colours and layout stay as in site.css. */
+
+@font-face { font-family: "Optima TC"; src: local("Optima Regular"), local("Optima-Regular"), url("fonts/optima.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Avenir Book TC"; src: url("fonts/avenir-book.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Avenir Book TC"; src: url("fonts/avenir-heavy.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+
+:root {
+  --display: "Optima TC", Optima, "Candara", "Segoe UI", sans-serif;
+  --sans: "Avenir Book TC", "Avenir Next", Avenir, "Nunito Sans", "Segoe UI", sans-serif;
+}
+
+h1, h2, h3, .facts strong, .price-line strong, .quote h4, .step .num, .split-legend strong, .me .name, .card .label strong, .offers b { font-weight: 400; }
+
+.triangle svg text { font-family: var(--display); }
+.triangle svg text[font-weight="900"] { font-weight: 400; font-size: 22px; }
+.triangle svg text[y="30"] { font-size: 26px; }
+.triangle svg text.small { font-family: var(--sans); }
